@@ -1,10 +1,10 @@
 <?php
 /* Database credentials. Assuming you are running MySQL
 server with default setting (user 'root' with no password) */
-$db_server = 'sql313.epizy.com';
-$db_username = 'epiz_34264836';
-$db_password = '6FGLYQDKvsjGl';
-$db_name = 'epiz_34264836_db_clinic';
+$db_server = 'localhost';
+$db_username = 'root';
+$db_password = '';
+$db_name = 'kaboom';
 
 /* Attempt to connect to MySQL database */
 $mysqli = new mysqli($db_server, $db_username, $db_password, $db_name);

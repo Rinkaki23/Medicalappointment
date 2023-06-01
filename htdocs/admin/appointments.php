@@ -33,7 +33,9 @@ if(isset($_POST['sendtopatient'])):
 $selected_patient = $_POST['selected_patient'];
 $selected_message = $_POST['selected_message'];
 $appointment_name = $_POST['appointment_name'];
-$appointment_doctor_assigned = $_POST['appointment_doctor_assigned'];
+// $appointment_doctor_assigned = $_POST['appointment_doctor_assigned'];
+$doc_id = $_POST['appointment_doctor_assigned'];
+// $date_suggestion = $_POST['date_suggestion'];
 
 if($selected_message==''){
     Print '<script>alert("Empty Message!");</script>'; //Prompts the user
@@ -45,7 +47,15 @@ else if($appointment_name==''){
     Print '<script>window.location.assign("appointments.php");</script>'; // redirects to appointments.php}
     exit;
 }
-$resappointment = mysqli_query($mysqli,"UPDATE `appointment` SET appointment='$appointment_name', assigned_doctor = '$appointment_doctor_assigned', status='ACCEPTED' WHERE fullname='$selected_patient' AND message='$selected_message'") or die(mysqli_error());
+$getDoctor = mysqli_query($mysqli, "SELECT * FROM tbldoctor WHERE id = ".$doc_id);
+while($row = mysqli_fetch_array($getDoctor)){
+    $doctor_name = 'Dr. '.$row['fname'].' '.$row['mname'].' '.$row['lname'];
+}
+
+// $available_appointment = mysqli_query($mysqli, "SELECT * FROM appointment 
+// WHERE doc_id = ".$doc_id." AND app_date = ".$date_suggestion." AND status = 'ACCEPTED'");
+
+$resappointment = mysqli_query($mysqli,"UPDATE `appointment` SET doc_id='$doc_id', appointment='$appointment_name', assigned_doctor = '$doctor_name', status='ACCEPTED' WHERE fullname='$selected_patient' AND message='$selected_message'") or die(mysqli_error());
 Print '<script>alert("Message Sent!");</script>'; //Prompts the user
 Print '<script>window.location.assign("appointments.php");</script>'; // redirects to appointments.php}
 
@@ -118,16 +128,19 @@ endif;
 
                 <?php
 
-                    if(isset($_POST['see_dtsug'])):
+                    if(isset($_POST['see_dtsug']) && isset($_POST['selected_message']))
+                    {
+
                             $getdate = mysqli_query($mysqli,"SELECT * FROM appointment WHERE fullname='".$_POST['selected_patient']."' AND message='".$_POST['selected_message']."'");
                             $datefetched = mysqli_fetch_array($getdate);
+                        
                             echo '<label>Date</label>';
                             echo '<input type="text" class="form-control" disabled="true" name="date_suggestion" value="'.$datefetched['app_date'].'" />';
                             echo '<label>Time</label>';
                             echo '<input type="text" class="form-control" disabled="true" name="time_suggestion" value="'.$datefetched['time'].'" /><br>';
-                        endif;
+                        }     
                 ?>
-
+               
                 <label>Appointment</label>
                 <div class="input-group"><span class="input-group-addon"></span>
                 <input type="text" class="form-control" name="appointment_name" />
@@ -137,16 +150,16 @@ endif;
                 <div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
                 <select class="form-control" name="appointment_doctor_assigned">
             <?php
-            $r = mysqli_query($mysqli,"select * from tbldoctor"); 
+            if(isset($datefetched)){
+
+                $r = mysqli_query($mysqli,"SELECT * FROM tbldoctor WHERE schedule='".$datefetched['time']."'");
             while($row = mysqli_fetch_array($r)){
-                 echo '<option>'.'Dr. '.$row['fname'].' '.$row['mname'].' '.$row['lname'].'</option>';
+                 echo '<option value="'.$row['id'].'">'.'Dr. '.$row['fname'].' '.$row['mname'].' '.$row['lname'].'</option>';
             }
                                 
                                 
                                 mysqli_free_result($r);
-                                
-                                
-                                
+            }                  
             ?>
                 </select></div>
 

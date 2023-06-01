@@ -88,7 +88,9 @@ if(isset($_POST['messagesent'])):
 
     }mysqli_free_result($search_all);
 
-    $result = mysqli_query($mysqli,"INSERT INTO `appointment` values(NULL,'$date_time_sent','$fullname','$message','N/A','$appointment_date','$appointment_time','N/A','N/A','N/A')") or die(mysqli_error());
+    //$result = mysqli_query($mysqli,"INSERT INTO `appointment` values(NULL,'$date_time_sent','$fullname','$message','N/A','$appointment_date','$appointment_time','N/A','N/A','N/A')") or die(mysqli_error());
+    
+    mysqli_query($mysqli, "INSERT INTO `appointment` (`date_sent`,`fullname`,`message`,`appointment`,`app_date`,`time`,`assigned_doctor`,`status`,`cancel`) VALUES('$date_time_sent','$fullname','$message','N/A','$appointment_date','$appointment_time','N/A','N/A','N/A')");
     Print '<script>alert("Message Sent!");</script>'; //Prompts the user
     Print '<script>window.location.assign("index.php");</script>'; // redirects to patient.php
     
